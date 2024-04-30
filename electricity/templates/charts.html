@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+<script>
+{% block jquery %}
+var endpoint = '/api/chart/data' 
+var defaultData = []
+var labels = []
+$.ajax({
+    mathod: "GET",
+    url: endpoint,
+    success: function(data) {
+        labels = data.labels
+        unitsData = data.units
+        costData = data.cost
+        averageUnits = data.averageUnits
+        averageCost = data.averageCost
+        setChart()
+        
+    },
+    error: function(error_data) {
+        console.log("error");
+        console.log(error_data);
+    }
+})
+
+function setChart() {
+    var ctx1 = document.getElementById('myUnitsChart').getContext('2d');
+    var myUnitsChart = new Chart(ctx1, {
+        showTooltips: true,
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: '# of Units',
+                data: unitsData,
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.2)',
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                ],
+                borderWidth: 1,
+
+            }, 
+            {
+                label: '# of Units/month: '+ parseInt(averageUnits)+ 'kWh',
+                data: averageUnits,
+                fill: false,
+                borderColor: [
+                    'rgba(235, 54, 162, 1)',
+                ],
+                borderWidth: 1
+                
+
+            }]
+        }, 
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    }); 
+
+    var ctx2 = document.getElementById('myPaymentChart').getContext('2d');
+    var myPaymentsChart = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: '# of Rands',
+                data: costData,
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                ],
+                borderColor: [
+                'rgba(54, 162, 235, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(54, 162, 235, 1)',
+                ],
+                borderWidth: 1
+            }, 
+            {
+                label: '# of Cost/month: R'+ parseInt(averageCost),
+                data: averageCost,
+                type: 'line',
+                fill: false,
+                borderColor: [
+                    'rgba(235, 54, 162, 1)',
+                ],
+                borderWidth: 1
+                
+                
+
+            }]
+        }, 
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    }); 
+}
+        
+{% endblock %}
+</script>
+
+
+{% block content %}
+
+<div class="row">
+    <div class="col-sm-12">
+        <h1>Stats on Mackay Electricity</h1>
+        <div style="padding-bottom: 20px;"> 
+            <h3 style="text-align: center;">Units Expense</h3>
+            <canvas id="myUnitsChart" width="900" height="600"></canvas>
+        </div>
+        <div style="padding-bottom: 20px;"> 
+            <h3 style="text-align: center;">Financial Expense</h3>
+            <canvas id="myPaymentChart" width="900" height="600"></canvas>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
